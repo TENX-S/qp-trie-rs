@@ -42,10 +42,10 @@ pub fn nybble_mismatch(left: &[u8], right: &[u8]) -> Option<usize> {
         difference = l ^ r;
 
         if difference != 0 {
-            if difference & 0x0F == 0 {
-                return Some(1 + i * 2);
+            return if difference & 0x0F == 0 {
+                Some(1 + i * 2)
             } else {
-                return Some(i * 2);
+                Some(i * 2)
             }
         }
     }
@@ -65,10 +65,10 @@ pub fn nybble_get_mismatch(left: &[u8], right: &[u8]) -> Option<(u8, usize)> {
         difference = l ^ r;
 
         if difference != 0 {
-            if difference & 0x0F == 0 {
-                return Some((1 + (l >> 4), 1 + i * 2));
+            return if difference & 0x0F == 0 {
+                Some((1 + (l >> 4), 1 + i * 2))
             } else {
-                return Some((1 + (l & 0x0F), i * 2));
+                Some((1 + (l & 0x0F), i * 2))
             }
         }
     }

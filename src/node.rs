@@ -4,9 +4,9 @@ use core::mem;
 
 use unreachable::UncheckedOptionExt;
 
-use iter::{IntoIter, Iter, IterMut};
-use sparse::Sparse;
-use util::{nybble_index, nybble_mismatch};
+use crate::iter::{IntoIter, Iter, IterMut};
+use crate::sparse::Sparse;
+use crate::util::{nybble_index, nybble_mismatch};
 
 // A leaf in the trie.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -188,19 +188,19 @@ impl<K, V> Branch<K, V> {
     }
 
     #[inline]
-    pub fn iter(&self) -> ::core::slice::Iter<Node<K, V>> {
+    pub fn iter(&self) -> core::slice::Iter<Node<K, V>> {
         self.entries.iter()
     }
 
     #[inline]
-    pub fn iter_mut(&mut self) -> ::core::slice::IterMut<Node<K, V>> {
+    pub fn iter_mut(&mut self) -> core::slice::IterMut<Node<K, V>> {
         self.entries.iter_mut()
     }
 }
 
 impl<K, V> IntoIterator for Branch<K, V> {
-    type IntoIter = ::alloc::vec::IntoIter<Node<K, V>>;
     type Item = Node<K, V>;
+    type IntoIter = alloc::vec::IntoIter<Node<K, V>>;
 
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
@@ -326,7 +326,7 @@ impl<K: Borrow<[u8]>, V> Node<K, V> {
     //
     // PRECONDITION:
     // - There exists at least one node in the trie with the given prefix.
-    pub fn get_prefix_validated<'a>(&'a self, prefix: &[u8]) -> &'a Node<K, V> {
+    pub fn get_prefix_validated(&self, prefix: &[u8]) -> &Node<K, V> {
         match *self {
             Node::Leaf(..) => self,
             Node::Branch(ref branch) => {
@@ -346,7 +346,7 @@ impl<K: Borrow<[u8]>, V> Node<K, V> {
 
     // Borrow the node which contains all and only entries with keys beginning with
     // `prefix`.
-    pub fn get_prefix<'a>(&'a self, prefix: &[u8]) -> Option<&'a Node<K, V>> {
+    pub fn get_prefix(&self, prefix: &[u8]) -> Option<&Node<K, V>> {
         match *self {
             Node::Leaf(ref leaf) if leaf.key_slice().starts_with(prefix) => Some(self),
             Node::Branch(ref branch)
@@ -364,7 +364,7 @@ impl<K: Borrow<[u8]>, V> Node<K, V> {
     //
     // PRECONDITION:
     // - There exists at least one node in the trie with the given prefix.
-    pub fn get_prefix_validated_mut<'a>(&'a mut self, prefix: &[u8]) -> &'a mut Node<K, V> {
+    pub fn get_prefix_validated_mut(&mut self, prefix: &[u8]) -> &mut Node<K, V> {
         match *self {
             Node::Leaf(..) => self,
             Node::Branch(..) => {
@@ -389,7 +389,7 @@ impl<K: Borrow<[u8]>, V> Node<K, V> {
 
     // Mutably borrow the node which contains all and only entries with keys beginning with
     // `prefix`.
-    pub fn get_prefix_mut<'a>(&'a mut self, prefix: &[u8]) -> Option<&'a mut Node<K, V>> {
+    pub fn get_prefix_mut(&mut self, prefix: &[u8]) -> Option<&mut Node<K, V>> {
         match *self {
             Node::Leaf(..) => {
                 // unsafe: self has been match'd as a leaf.
@@ -671,8 +671,8 @@ impl<K, V> Node<K, V> {
 }
 
 impl<K, V> IntoIterator for Node<K, V> {
-    type IntoIter = IntoIter<K, V>;
     type Item = (K, V);
+    type IntoIter = IntoIter<K, V>;
 
     fn into_iter(self) -> Self::IntoIter {
         IntoIter::new(self)

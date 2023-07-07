@@ -1,12 +1,14 @@
-use alloc::{vec, vec::Vec};
 use core::borrow::Borrow;
+use smallvec::{smallvec as vec, SmallVec as Vec};
 
-use node::Node;
+use crate::node::Node;
+
+const _STOMP_COMMAND_COUNT: usize = 15;
 
 /// An iterator over the keys and values in a QP-trie.
 #[derive(Clone, Debug)]
-pub struct IntoIter<K, V> {
-    stack: Vec<Node<K, V>>,
+pub struct IntoIter<K, V, const N: usize = _STOMP_COMMAND_COUNT> {
+    stack: Vec<[Node<K, V>; N]>,
 }
 
 impl<K, V> IntoIter<K, V> {
@@ -38,23 +40,23 @@ impl<K, V> Iterator for IntoIter<K, V> {
 
 /// An iterator over immutable references to keys and values in a QP-trie.
 #[derive(Clone, Debug)]
-pub struct Iter<'a, K: 'a, V: 'a> {
-    stack: Vec<&'a Node<K, V>>,
+pub struct Iter<'a, K: 'a, V: 'a, const N: usize = _STOMP_COMMAND_COUNT> {
+    stack: Vec<[&'a Node<K, V>; N]>,
 }
 
-impl<'a, K, V> Iter<'a, K, V> {
-    pub fn new(node: &'a Node<K, V>) -> Iter<'a, K, V> {
+impl<'a, K, V, const N: usize> Iter<'a, K, V, N> {
+    pub fn new(node: &'a Node<K, V>) -> Iter<'a, K, V, N> {
         Iter { stack: vec![node] }
     }
 }
 
-impl<'a, K, V> Default for Iter<'a, K, V> {
+impl<'a, K, V, const N: usize> Default for Iter<'a, K, V, N> {
     fn default() -> Self {
         Iter { stack: vec![] }
     }
 }
 
-impl<'a, K: 'a, V: 'a> Iterator for Iter<'a, K, V> {
+impl<'a, K: 'a, V: 'a, const N: usize> Iterator for Iter<'a, K, V, N> {
     type Item = (&'a K, &'a V);
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -71,8 +73,8 @@ impl<'a, K: 'a, V: 'a> Iterator for Iter<'a, K, V> {
 
 /// An iterator over immutable references to keys and mutable references to values in a QP-trie.
 #[derive(Debug)]
-pub struct IterMut<'a, K: 'a, V: 'a> {
-    stack: Vec<&'a mut Node<K, V>>,
+pub struct IterMut<'a, K: 'a, V: 'a, const N: usize = _STOMP_COMMAND_COUNT> {
+    stack: Vec<[&'a mut Node<K, V>; N]>,
 }
 
 impl<'a, K, V> IterMut<'a, K, V> {
@@ -104,8 +106,8 @@ impl<'a, K: 'a, V: 'a> Iterator for IterMut<'a, K, V> {
 
 /// An iterator over immutable references to the keys in the QP-trie.
 #[derive(Clone, Debug)]
-pub struct Keys<'a, K: 'a, V: 'a> {
-    stack: Vec<&'a Node<K, V>>,
+pub struct Keys<'a, K: 'a, V: 'a, const N: usize = _STOMP_COMMAND_COUNT> {
+    stack: Vec<[&'a Node<K, V>; N]>,
 }
 
 impl<'a, K, V> Keys<'a, K, V> {
@@ -137,8 +139,8 @@ impl<'a, K: 'a, V: 'a> Iterator for Keys<'a, K, V> {
 
 /// An iterator over immutable references to the values in the QP-trie.
 #[derive(Clone, Debug)]
-pub struct Values<'a, K: 'a, V: 'a> {
-    stack: Vec<&'a Node<K, V>>,
+pub struct Values<'a, K: 'a, V: 'a, const N: usize = _STOMP_COMMAND_COUNT> {
+    stack: Vec<[&'a Node<K, V>; N]>,
 }
 
 impl<'a, K, V> Values<'a, K, V> {
@@ -170,8 +172,8 @@ impl<'a, K: 'a, V: 'a> Iterator for Values<'a, K, V> {
 
 /// An iterator over mutable references to the values in the QP-trie.
 #[derive(Debug)]
-pub struct ValuesMut<'a, K: 'a, V: 'a> {
-    stack: Vec<&'a mut Node<K, V>>,
+pub struct ValuesMut<'a, K: 'a, V: 'a, const N: usize = _STOMP_COMMAND_COUNT> {
+    stack: Vec<[&'a mut Node<K, V>; N]>,
 }
 
 impl<'a, K, V> ValuesMut<'a, K, V> {

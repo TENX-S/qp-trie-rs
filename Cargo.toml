@@ -1,5 +1,6 @@
 [package]
 authors = ["Sean Leffler <sean@errno.com>"]
+edition = "2021"
 name = "qp-trie"
 version = "0.8.1"
 
@@ -24,6 +25,7 @@ travis-ci = { repository = "sdleffler/qp-trie-rs", branch = "master" }
 new_debug_unreachable = "1.0.1"
 serde = { version = "1.0.11", optional = true, features = ["derive"] }
 unreachable = "1.0.0"
+smallvec = { version = "1", features = ["const_generics"] }
 
 [dev-dependencies]
 bincode = "1.0"

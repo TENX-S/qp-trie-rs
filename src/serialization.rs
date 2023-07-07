@@ -1,4 +1,4 @@
-use trie::Trie;
+use crate::trie::Trie;
 
 use core::borrow::Borrow;
 use core::fmt;

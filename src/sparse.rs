@@ -1,7 +1,6 @@
-use alloc::vec::{IntoIter, Vec};
 use core::fmt;
 use core::slice::{Iter, IterMut};
-
+use alloc::vec::{IntoIter, Vec};
 use unreachable::UncheckedOptionExt;
 
 // A sparse array, holding up to 17 elements, indexed by nybbles with a special exception for
@@ -135,8 +134,8 @@ impl<T> Sparse<T> {
 }
 
 impl<T> IntoIterator for Sparse<T> {
-    type IntoIter = IntoIter<T>;
     type Item = T;
+    type IntoIter = IntoIter<T>;
 
     #[inline]
     fn into_iter(self) -> Self::IntoIter {

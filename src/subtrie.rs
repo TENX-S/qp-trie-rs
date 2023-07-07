@@ -2,8 +2,8 @@ use core::borrow::Borrow;
 use core::fmt;
 use core::ops::Index;
 
-use iter::Iter;
-use node::Node;
+use crate::iter::Iter;
+use crate::node::Node;
 
 pub struct SubTrie<'a, K: 'a, V: 'a> {
     pub(crate) root: Option<&'a Node<K, V>>,
@@ -19,8 +19,8 @@ impl<'a, K: fmt::Debug, V: fmt::Debug> fmt::Debug for SubTrie<'a, K, V> {
 }
 
 impl<'a, K: 'a, V: 'a> IntoIterator for SubTrie<'a, K, V> {
-    type IntoIter = Iter<'a, K, V>;
     type Item = (&'a K, &'a V);
+    type IntoIter = Iter<'a, K, V>;
 
     fn into_iter(self) -> Self::IntoIter {
         self.root.map(Node::iter).unwrap_or_default()

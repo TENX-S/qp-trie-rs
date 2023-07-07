@@ -4,12 +4,12 @@ use core::fmt;
 use core::iter::FromIterator;
 use core::ops::{Index, IndexMut};
 
-use entry::{make_entry, Entry};
-use iter::{IntoIter, Iter, IterMut, Keys, Values, ValuesMut};
-use node::{Leaf, Node};
-use subtrie::SubTrie;
-use util::nybble_mismatch;
-use wrapper::{BStr, BString};
+use crate::entry::{make_entry, Entry};
+use crate::iter::{IntoIter, Iter, IterMut, Keys, Values, ValuesMut};
+use crate::node::{Leaf, Node};
+use crate::subtrie::SubTrie;
+use crate::util::nybble_mismatch;
+use crate::wrapper::{BStr, BString};
 
 /// A QP-trie. QP stands for - depending on who you ask - either "quelques-bits popcount" or
 /// "quad-bit popcount". In any case, the fact of the matter is that this is a compressed radix
@@ -89,8 +89,8 @@ impl<K: fmt::Debug + ToOwned, V: fmt::Debug> fmt::Debug for Trie<K, V> {
 }
 
 impl<K, V> IntoIterator for Trie<K, V> {
-    type IntoIter = IntoIter<K, V>;
     type Item = (K, V);
+    type IntoIter = IntoIter<K, V>;
 
     fn into_iter(self) -> Self::IntoIter {
         self.root
@@ -187,7 +187,7 @@ impl<K, V> Trie<K, V> {
 
 impl<K: Borrow<[u8]>, V> Trie<K, V> {
     /// Iterate over all elements with a given prefix.
-    pub fn iter_prefix<'a, Q: ?Sized>(&'a self, prefix: &Q) -> Iter<'a, K, V>
+    pub fn iter_prefix<Q: ?Sized>(&self, prefix: &Q) -> Iter<K, V>
     where
         K: Borrow<Q>,
         Q: Borrow<[u8]>,
@@ -204,7 +204,7 @@ impl<K: Borrow<[u8]>, V> Trie<K, V> {
 
     /// Iterate over all elements with a given prefix, but given a mutable reference to the
     /// associated value.
-    pub fn iter_prefix_mut<'a, Q: ?Sized>(&'a mut self, prefix: &Q) -> IterMut<'a, K, V>
+    pub fn iter_prefix_mut<Q: ?Sized>(&mut self, prefix: &Q) -> IterMut<K, V>
     where
         K: Borrow<Q>,
         Q: Borrow<[u8]>,
@@ -220,7 +220,7 @@ impl<K: Borrow<[u8]>, V> Trie<K, V> {
     }
 
     /// Get an immutable view into the trie, providing only values keyed with the given prefix.
-    pub fn subtrie<'a, Q: ?Sized>(&'a self, prefix: &Q) -> SubTrie<'a, K, V>
+    pub fn subtrie<Q: ?Sized>(&self, prefix: &Q) -> SubTrie<K, V>
     where
         K: Borrow<Q>,
         Q: Borrow<[u8]>,
@@ -234,7 +234,7 @@ impl<K: Borrow<[u8]>, V> Trie<K, V> {
     }
 
     /// Get the longest common prefix of all the nodes in the trie and the given key.
-    pub fn longest_common_prefix<'a, Q: ?Sized>(&'a self, key: &Q) -> &'a K::Split
+    pub fn longest_common_prefix<Q: ?Sized>(&self, key: &Q) -> &K::Split
     where
         K: Borrow<Q> + Break,
         Q: Borrow<[u8]>,
@@ -270,7 +270,7 @@ impl<K: Borrow<[u8]>, V> Trie<K, V> {
     }
 
     /// Get an immutable reference to the value associated with a given key, if it is in the tree.
-    pub fn get<'a, Q: ?Sized>(&'a self, key: &Q) -> Option<&'a V>
+    pub fn get<Q: ?Sized>(&self, key: &Q) -> Option<&V>
     where
         K: Borrow<Q>,
         Q: Borrow<[u8]>,
@@ -282,7 +282,7 @@ impl<K: Borrow<[u8]>, V> Trie<K, V> {
     }
 
     /// Get a mutable reference to the value associated with a given key, if it is in the tree.
-    pub fn get_mut<'a, Q: ?Sized>(&'a mut self, key: &Q) -> Option<&'a mut V>
+    pub fn get_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<&mut V>
     where
         K: Borrow<Q>,
         Q: Borrow<[u8]>,
@@ -403,7 +403,7 @@ impl<'b> Break for &'b [u8] {
 
 impl<V> Trie<BString, V> {
     /// Convenience function for iterating over suffixes with a string.
-    pub fn iter_prefix_str<'a, Q: ?Sized>(&'a self, key: &Q) -> Iter<'a, BString, V>
+    pub fn iter_prefix_str<Q: ?Sized>(&self, key: &Q) -> Iter<BString, V>
     where
         Q: Borrow<str>,
     {
@@ -411,7 +411,7 @@ impl<V> Trie<BString, V> {
     }
 
     /// Convenience function for iterating over suffixes with a string.
-    pub fn iter_prefix_mut_str<'a, Q: ?Sized>(&'a mut self, key: &Q) -> IterMut<'a, BString, V>
+    pub fn iter_prefix_mut_str<Q: ?Sized>(&mut self, key: &Q) -> IterMut<BString, V>
     where
         Q: Borrow<str>,
     {
@@ -419,7 +419,7 @@ impl<V> Trie<BString, V> {
     }
 
     /// Convenience function for viewing subtries wit a string prefix.
-    pub fn subtrie_str<'a, Q: ?Sized>(&'a self, prefix: &Q) -> SubTrie<'a, BString, V>
+    pub fn subtrie_str<Q: ?Sized>(&self, prefix: &Q) -> SubTrie<BString, V>
     where
         Q: Borrow<str>,
     {
@@ -435,7 +435,7 @@ impl<V> Trie<BString, V> {
     }
 
     /// Convenience function for getting with a string.
-    pub fn get_str<'a, Q: ?Sized>(&'a self, key: &Q) -> Option<&'a V>
+    pub fn get_str<Q: ?Sized>(&self, key: &Q) -> Option<&V>
     where
         Q: Borrow<str>,
     {
@@ -443,7 +443,7 @@ impl<V> Trie<BString, V> {
     }
 
     /// Convenience function for getting mutably with a string.
-    pub fn get_mut_str<'a, Q: ?Sized>(&'a mut self, key: &Q) -> Option<&'a mut V>
+    pub fn get_mut_str<Q: ?Sized>(&mut self, key: &Q) -> Option<&mut V>
     where
         Q: Borrow<str>,
     {

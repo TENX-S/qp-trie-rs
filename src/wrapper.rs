@@ -5,7 +5,7 @@ use core::fmt;
 use core::hash::{Hash, Hasher};
 use core::ops::Deref;
 
-use trie::Break;
+use crate::trie::Break;
 
 /// A wrapper for `String` which implements `Borrow<[u8]>` and hashes in the same way as a byte
 /// slice.
@@ -63,7 +63,7 @@ impl Borrow<[u8]> for BString {
     }
 }
 
-#[allow(clippy::derive_hash_xor_eq)]
+#[allow(clippy::derived_hash_with_manual_eq)]
 impl Hash for BString {
     #[inline]
     fn hash<H: Hasher>(&self, state: &mut H) {
@@ -118,7 +118,7 @@ impl Borrow<[u8]> for BStr {
     }
 }
 
-#[allow(clippy::derive_hash_xor_eq)]
+#[allow(clippy::derived_hash_with_manual_eq)]
 impl Hash for BStr {
     #[inline]
     fn hash<H: Hasher>(&self, state: &mut H) {

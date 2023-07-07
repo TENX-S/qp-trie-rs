@@ -4,8 +4,8 @@ use core::mem;
 
 use unreachable::UncheckedOptionExt;
 
-use node::{Leaf, Node};
-use util::nybble_get_mismatch;
+use crate::node::{Leaf, Node};
+use crate::util::nybble_get_mismatch;
 
 pub fn make_entry<'a, K: 'a + Borrow<[u8]>, V: 'a>(
     key: K,
